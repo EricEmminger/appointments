@@ -11,12 +11,30 @@ class AppointmentsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:appointments)
   end
 
+  test "should accept start time" do
+    get :index, {start_time: Date.today + 1}
+    assert_response :success
+    assert_not_nil assigns(:appointments)
+    @appointment = appointments(:tomorrow)
+    assert_equal @appointment.start_time, assigns(:appointments)[0].start_time
+  end
+
+  test "should accept end time" do
+    get :index, {end_time: Date.today + 1}
+    assert_response :success
+    assert_not_nil assigns(:appointments)
+    @appointment = appointments(:tomorrow)
+    assert_equal @appointment.end_time, assigns(:appointments)[0].end_time
+  end
+
   test "should get new" do
     get :new
     assert_response :success
   end
 
   test "should create appointment" do
+    @appointment.start_time = Date.today + 2
+    @appointment.end_time = @appointment.start_time
     assert_difference('Appointment.count') do
       post :create, appointment: { comments: @appointment.comments, end_time: @appointment.end_time, first_name: @appointment.first_name, last_name: @appointment.last_name, start_time: @appointment.start_time }
     end

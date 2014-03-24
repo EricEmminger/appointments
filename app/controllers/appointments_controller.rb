@@ -5,6 +5,17 @@ class AppointmentsController < ApplicationController
   # GET /appointments.json
   def index
     @appointments = Appointment.all
+    conditions = []
+    values = {}
+    if params[:start_time]
+      conditions << "start_time >= :start_time"
+      values[:start_time] = params[:start_time]
+    end
+    if params[:end_time]
+      conditions << "end_time <= :end_time"
+      values[:end_time] = params[:end_time]
+    end
+    @appointments = @appointments.where(conditions.join(' AND '), values) unless conditions.empty?
   end
 
   # GET /appointments/1
