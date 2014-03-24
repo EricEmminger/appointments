@@ -10,5 +10,6 @@ class CreateAppointments < ActiveRecord::Migration
       t.timestamps
     end
     add_index :appointments, :start_time, unique: true
+    add_index :appointments, :end_time, unique: true
   end
 end
