@@ -5,11 +5,11 @@ class AppointmentTest < ActiveSupport::TestCase
     a = Appointment.new
     assert_not a.valid?
     assert_not a.errors[:start_time].empty?
-    a.start_time = Date.today + 2
+    a.start_time = Date.today + 3
     assert_not a.valid?
     assert a.errors[:start_time].empty?
     assert_not a.errors[:end_time].empty?
-    a.end_time = Date.today + 2
+    a.end_time = Date.today + 3
     assert a.valid?
     assert a.save
   end
@@ -26,12 +26,9 @@ class AppointmentTest < ActiveSupport::TestCase
     b = a.clone
     c = a.clone
     assert a.save
-    puts a.inspect
     assert_not b.save
-    puts b.inspect
     c.start_time += 60
     c.end_time -= 60
     assert_not c.save
-    puts c.inspect
   end
 end

@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20140321114801) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "appointments", force: true do |t|
     t.datetime "start_time"
     t.datetime "end_time"
@@ -23,7 +26,7 @@ ActiveRecord::Schema.define(version: 20140321114801) do
     t.datetime "updated_at"
   end
 
-  add_index "appointments", ["end_time"], name: "index_appointments_on_end_time", unique: true
-  add_index "appointments", ["start_time"], name: "index_appointments_on_start_time", unique: true
+  add_index "appointments", ["end_time"], name: "index_appointments_on_end_time", unique: true, using: :btree
+  add_index "appointments", ["start_time"], name: "index_appointments_on_start_time", unique: true, using: :btree
 
 end

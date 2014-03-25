@@ -4,7 +4,7 @@ class AppointmentsController < ApplicationController
   # GET /appointments
   # GET /appointments.json
   def index
-    @appointments = Appointment.all
+    @appointments = Appointment.all.order(:start_time)
     conditions = []
     values = {}
     if params[:start_time]
