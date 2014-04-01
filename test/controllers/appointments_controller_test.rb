@@ -5,6 +5,16 @@ class AppointmentsControllerTest < ActionController::TestCase
     @appointment = appointments(:one)
   end
 
+  def allow_forgery_protection
+    original = ActionController::Base.allow_forgery_protection
+    begin
+      ActionController::Base.allow_forgery_protection = true
+      yield if block_given?
+    ensure
+      ActionController::Base.allow_forgery_protection = original
+    end
+  end
+
   test "should get index" do
     get :index
     assert_response :success
@@ -41,8 +51,16 @@ class AppointmentsControllerTest < ActionController::TestCase
     assert_difference('Appointment.count') do
       post :create, appointment: { comments: @appointment.comments, end_time: @appointment.end_time, first_name: @appointment.first_name, last_name: @appointment.last_name, start_time: @appointment.start_time }
     end
-
     assert_redirected_to appointment_path(assigns(:appointment))
+
+    allow_forgery_protection do
+      @appointment.start_time = Date.today + 4
+      @appointment.end_time = @appointment.start_time
+      assert_difference('Appointment.count') do
+        post :create, appointment: { comments: @appointment.comments, end_time: @appointment.end_time, first_name: @appointment.first_name, last_name: @appointment.last_name, start_time: @appointment.start_time }, format: :json
+      end
+      assert_response :created
+    end
   end
 
   test "should show appointment" do
@@ -58,13 +76,25 @@ class AppointmentsControllerTest < ActionController::TestCase
   test "should update appointment" do
     patch :update, id: @appointment, appointment: { comments: @appointment.comments, end_time: @appointment.end_time, first_name: @appointment.first_name, last_name: @appointment.last_name, start_time: @appointment.start_time }
     assert_redirected_to appointment_path(assigns(:appointment))
+
+    allow_forgery_protection do
+      patch :update, id: @appointment, appointment: { comments: @appointment.comments, end_time: @appointment.end_time, first_name: @appointment.first_name, last_name: @appointment.last_name, start_time: @appointment.start_time }, format: :json
+      assert_response :no_content
+    end
   end
 
   test "should destroy appointment" do
     assert_difference('Appointment.count', -1) do
       delete :destroy, id: @appointment
     end
-
     assert_redirected_to appointments_path
+
+    allow_forgery_protection do
+      @appointment = appointments(:tomorrow)
+      assert_difference('Appointment.count', -1) do
+        delete :destroy, id: @appointment, format: :json
+      end
+      assert_response :no_content
+    end
   end
 end
